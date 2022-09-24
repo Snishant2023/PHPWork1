@@ -1,0 +1,24 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Yeskn\MainBundle\Twig\WebsiteInfo:
+        tags:
+            - { name: twig.extension }
+
+    Yeskn\MainBundle\EventListener\RequestListener:
+        tags:
+        - { name: kernel.event_listener, event: kernel.request, priority: 50 }
+
+    Yeskn\MainBundle\EventListener\ControllerListener:
+        tags:
+        - { name: kernel.event_listener, event: kernel.controller }
+
+    Yeskn\MainBundle\EventListener\ResponseListener:
+        tags:
+        - { name: kernel.event_listener, event: kernel.response }
+
+    Symfony\Bridge\Twig\Extension\AssetExtension: "@twig.extension.assets"
+    Symfony\Bundle\SecurityBundle\Security\FirewallMap: "@security.firewall.map"

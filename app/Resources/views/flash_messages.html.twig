@@ -1,0 +1,21 @@
+{% if app.session.started and app.session.flashBag.peekAll is not empty %}
+    {% for type, messages in app.session.flashBag.all %}
+        {% for message in messages %}
+            {% if type == 'message' %}
+                {%  set type = 'info' %}
+            {% endif %}
+            <script>
+                $(function () {
+                    bootoast({
+                        message: '{{ message|trans|raw }}',
+                        type: '{{ type }}',
+                        position: 'top-center',
+                        timeout: 2,
+                        animationDuration: 300,
+                        dismissable: true
+                    });
+                })
+            </script>
+        {% endfor %}
+    {% endfor %}
+{% endif %}

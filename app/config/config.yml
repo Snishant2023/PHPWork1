@@ -1,0 +1,123 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+parameters:
+    locale: zh_CN
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    node: '%node_path%'
+    filters:
+        cssrewrite: ~
+        uglifyjs2:
+            bin: '%uglifyjs2_path%'
+
+framework:
+    secret: '%secret%'
+    translator:      { fallbacks: ["%locale%"] }
+    router:
+        resource: '%kernel.config_dir%/routing.yml'
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    templating:
+        engines: ['twig']
+    default_locale: '%locale%'
+    trusted_hosts: ~
+    session:
+        handler_id:  snc_redis.session.handler
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+    fragments: ~
+    http_method_override: true
+    assets: ~
+    php_errors:
+        log: true
+
+twig:
+    debug: '%kernel.debug%'
+    strict_variables: false
+    form_themes:
+        - "form/image-input-filed-type.html.twig"
+        - "form/tiny-html-textarea-field-type.html.twig"
+        - "form/datetime-range-field-type.html.twig"
+        - "bootstrap_3_layout.html.twig"
+
+doctrine:
+    dbal:
+        driver: pdo_mysql
+        host: '%database_host%'
+        port: '%database_port%'
+        dbname: '%database_name%'
+        user: '%database_user%'
+        password: '%database_password%'
+        charset: 'utf8mb4'
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
+
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+
+swiftmailer:
+    transport: '%mailer_transport%'
+    host: '%mailer_host%'
+    username: '%mailer_user%'
+    password: '%mailer_password%'
+    port: '587'
+    encryption: 'tls'
+    spool: { type: service, id: snc_redis.swiftmailer.spool }
+
+sensio_framework_extra:
+   router:
+        annotations: false
+
+snc_redis:
+    clients:
+        default:
+            type: predis
+            alias: default
+            dsn: "%redis_dsn%"
+        session:
+            type: predis
+            alias: session
+            dsn: "%redis_dsn%"
+        cache:
+            type: predis
+            alias: cache
+            dsn: "%redis_dsn%"
+            options:
+                profile: 2.2
+                connection_timeout: 10
+                read_write_timeout: 30
+    session:
+        client: session
+    doctrine:
+        metadata_cache:
+            client: cache
+            entity_manager: default
+            document_manager: default
+            namespace: "vmoex:"
+        result_cache:
+            client: cache
+            entity_manager: default
+            namespace: "vmoex:"
+        query_cache:
+            client: cache
+            entity_manager: default
+            namespace: "vmoex:"
+        second_level_cache:
+            client: cache
+            entity_manager: default
+            namespace: "vmoex:"
+    swiftmailer:
+        client: default
+        key: swiftmailer
+    profiler_storage:
+        client: default
+        ttl: 3600

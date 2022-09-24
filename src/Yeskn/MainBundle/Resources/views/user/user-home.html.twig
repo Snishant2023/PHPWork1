@@ -1,0 +1,116 @@
+{% extends '@YesknMain/base.html.twig' %}
+
+{% block page_wraper %}
+    <div class="row content-row">
+       {% include '@YesknMain/user/sidebar.html.twig' %}
+        <div class="col-lg-8 content-main" role="main">
+            <div class="row user-home">
+                <div class="col-lg-12">
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ 'user_my_posts'|trans }}
+                        </div>
+                        <div class="panel-body">
+                            {% set posts = user.posts|slice(0, 20) %}
+                            {% if posts is not empty %}
+                                {% for post in posts|reverse %}
+                                    <article class="main home-article-main" style="position: relative;padding-left: 0">
+                                        <div class="col-md-12 post-info">
+                                    <span class="item-small-title">
+                                        <a data-pjax
+                                           href="{{ path('post_show' , {'id' : post.id}) }}">{{ post.title }}</a>
+                                    </span>
+                                            <div class="post-meta">
+                                         <span class="category">
+                                             <a data-pjax href="{{ path('post_list', {tab:post.tab.alias}) }}" class="badge">{{ post.tab.name|trans }}</a>
+                                         </span>
+                                                <span><i class="fa fa-clock-o"></i> {{ post.createdAt|ago }}</span>
+                                                <span><i class="fa fa-eye"></i> {{ post.views }}{{ 'click'|trans }}</span>
+                                                {% if post.comments.count %}
+                                                    <span><i class="fa fa-commenting-o"></i>
+                                                <a data-pjax href="{{ path('post_show', {id:post.id}) }}#comments">{{ post.comments.count }}{{ 'comment'|trans }}</a></span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+                            {% else %}
+                                {{ 'userhome_no_published_post'|trans }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ 'user_my_comments'|trans }}
+                        </div>
+                        <div class="panel-body">
+                            {% set comments = user.comments %}
+                            {% if comments is not empty %}
+                                {% for comment in comments|reverse %}
+                                    <div class="row border-bottom" style="margin-bottom: 10px">
+                                        <div class="col-md-12">
+                                            {{ 'time 发表在'|trans({time:comment.createdAt|ago}) }}
+                                            <a data-pjax href="{{ path('post_show', {id: comment.post.id}) }}">{{ comment.post.title }}</a>
+                                            上：
+                                            <blockquote class="home-bq">
+                                                {{ comment.content|raw }}
+                                            </blockquote>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ 'userhome_no_recent_reply'|trans }}
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ 'user_my_following'|trans }}
+                        </div>
+                        <div class="panel-body">
+                            {% if user.following is not empty %}
+                                {% for fo in user.following %}
+                                    <li style="list-style: none;margin: 10px 0;display: inline-block;padding-right: 10px">
+                                        <a data-pjax href="{{ path('member_home', {username: fo.username}) }}">
+                                            <img src="{{ asset(fo.avatar) }}" alt="" width="25" height="25" style="border-radius: 50%">
+                                            {{ fo.nickname }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                {{ 'userhome_he_is_cold'|trans({name:user.nickname}) }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ 'user_my_follower'|trans }}
+                        </div>
+                        <div class="panel-body">
+                            {% if user.followers is not empty %}
+                                {% for fo in user.followers %}
+                                    <li style="list-style: none;margin: 10px 0;display: inline-block;padding-right: 10px">
+                                        <a data-pjax href="{{ path('member_home', {username: fo.username}) }}">
+                                            <img src="{{ asset(fo.avatar) }}" alt="" width="25" height="25" style="border-radius: 50%">
+                                            {{ fo.nickname }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                {{ 'userhome_he_has_no_follower'|trans }}
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

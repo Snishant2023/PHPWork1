@@ -1,0 +1,45 @@
+services:
+
+  _defaults:
+      autowire: true
+      autoconfigure: true
+      public: true
+      bind:
+        $socketHost: "%socket_host%"
+        $projectDir: "%kernel.project_dir%"
+        $emailUser: "%mailer_user%"
+
+  Yeskn\MainBundle\:
+      resource: '../../../MainBundle/*'
+      exclude: '../../../MainBundle/{Entity,Repository,Tests,Form/DataTransfer}'
+
+  Yeskn\Support\Routing\DynamicRoutesGeneratorInterface: '@Yeskn\MainBundle\Routing\DynamicRoutesGenerator'
+
+  Yeskn\MainBundle\Controller\:
+      resource: '../../../MainBundle/Controller'
+      public: true
+      tags: ['controller.service_arguments']
+
+  Yeskn\MainBundle\Twig\Render:
+    tags:
+      - { name: twig.extension }
+
+  socket.push:
+    public: true
+    class: Yeskn\MainBundle\Services\SocketPushService
+
+  Yeskn\MainBundle\Twig\GlobalValue:
+      tags:
+        - { name: twig.extension }
+
+  Yeskn\MainBundle\EventListener\AjaxAuthenticationListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, method: onCoreException, priority: 1000 }
+
+  Knp\Bundle\MarkdownBundle\Parser\MarkdownParser:
+    arguments:
+      - { header: false, list: false, table: false }
+
+  Yeskn\MainBundle\EventListener\TerminateListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }

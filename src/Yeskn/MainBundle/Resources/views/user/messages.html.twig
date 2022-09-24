@@ -1,0 +1,81 @@
+{% extends '@YesknMain/base.html.twig' %}
+
+{% block page_wraper %}
+    <div class="row content-row">
+        {% include '@YesknMain/user/sidebar.html.twig' %}
+        <div class="col-lg-8 content-main" role="main">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-envelope fa-fw"></i> {{ 'user_my_messages'|trans }}
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#receive" data-toggle="tab">{{ 'user_my_received_messages'|trans }}</a>
+                        </li>
+                        <li><a href="#send" data-toggle="tab">{{ 'user_my_sent_messages'|trans }}</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content my-messages">
+                        <div class="tab-pane fade in active" id="receive">
+                            {% if rMessages is not empty %}
+                                <ul class="messages list-group">
+                                    {% for message in rMessages %}
+                                        <li class="list-group-item {{ message.isRead ? '' : 'list-group-item-warning' }}">
+                                            <img src="{{ asset(message.sender.avatar) }}" alt="" width="30" height="30" class="img-rounded">
+                                            <a data-pjax href="{{ path('member_home', {username: message.sender.username}) }}">{{ message.sender.nickname }}</a>
+                                            {{ ('user_send_message_to_you'|trans) ~ message.content }}
+                                            <span class="pull-right">{{ message.createdAt|ago }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    {{ 'sorry_no_content'|trans }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane fade" id="send">
+                            {% if sMessages is not empty %}
+                                <ul class="messages list-group">
+                                    {% for message in sMessages %}
+                                        <li class="list-group-item">
+                                            <img src="{{ asset(message.receiver.avatar) }}" alt="" width="30" height="30" class="img-rounded">
+                                            {{ 'user_you_send_message_to'|trans({receiver: '<a data-pjax href="%s">%s</a>'|format(path('member_home', {username: message.receiver.username}), message.receiver.nickname)})|raw }}
+                                            {{ message.content }} <span class="pull-right">{{ message.createdAt|ago }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    {{ 'sorry_no_content'|trans }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $.ajax({
+                method: "POST",
+                url: window.Yeskn.links.G_set_message_red_link,
+                success: function () {
+                }
+            });
+
+            let bellCount = '{{ notice_count }}'*1;
+
+            if (bellCount) {
+                $('.nav-bell-dot').addClass('push-notifications-count');
+            } else {
+                $('.nav-bell-dot').removeClass('push-notifications-count');
+            }
+        })
+    </script>
+
+{% endblock %}

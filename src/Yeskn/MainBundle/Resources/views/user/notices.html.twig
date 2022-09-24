@@ -1,0 +1,73 @@
+{% extends '@YesknMain/base.html.twig' %}
+
+{% block page_wraper %}
+    <div class="row content-row">
+        {% include '@YesknMain/user/sidebar.html.twig' %}
+        <div class="col-lg-8 content-main" role="main">
+            <div class="panel panel-default notifications-panel">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> {{ 'notice_my_notice'|trans({name:app.user.nickname}) }}
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#not_read" data-toggle="tab">{{ 'notice_unread'|trans }}</a>
+                        </li>
+                        <li><a href="#read" data-toggle="tab">{{ 'notice_read'|trans }}</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="not_read">
+                            {% if unreadNotices is not empty %}
+                                <ul class="notifications-list list-group">
+                                    {% for notice in unreadNotices %}
+                                        <li class="list-group-item list-group-item-warning">
+                                            {{ notice|render_notice_item|raw }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    {{ 'sorry_no_content'|trans }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane fade" id="read">
+                            {% if readNotices is not empty %}
+                                <ul class="notifications-list  list-group">
+                                    {% for notice in readNotices %}
+                                        <li class="list-group-item">
+                                            {{ notice|render_notice_item|raw }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    {{ 'sorry_no_content'|trans }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $.ajax({
+                method: "POST",
+                url: '{{ path('set_notice_red') }}',
+                success: function () {
+                }
+            });
+
+            let bellCount = '{{ message_count }}'*1;
+            if (bellCount) {
+                $('.nav-bell-dot').addClass('push-notifications-count');
+            } else {
+                $('.nav-bell-dot').removeClass('push-notifications-count');
+            }
+        })
+    </script>
+{% endblock %}

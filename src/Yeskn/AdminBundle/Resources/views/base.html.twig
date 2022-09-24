@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Vmoex Admin Panel">
+    <meta name="author" content="Jake">
+    {% block title %} <title>{{ 'site_name'|trans }} Admin</title> {% endblock %}
+    {% block head_css_link %}
+        {% stylesheets
+            'assets/lib/bootstrap/dist/css/bootstrap.min.css'
+            'assets/lib/startbootstrap-sb-admin-2/dist/css/sb-admin-2.min.css'
+            'assets/lib/font-awesome/css/font-awesome.min.css'
+            'assets/lib/metisMenu/dist/metisMenu.min.css'
+            'assets/lib/bootoast/css/bootoast.css'
+            'assets/lib/eds-ui/dist/css/edsUI.css'
+            'assets/css/admin.css'
+            filter='cssrewrite' output='build/css/*.css' %}
+            <link rel="stylesheet" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+
+    {% block header_stylesheet %}{% endblock %}
+
+    {% block head_js_link %}
+        <script src="{{ asset('assets/lib/jquery/dist/jquery.min.js') }}"></script>
+        <script>
+            window.YesknPlugins = {{ javascriptPlugins()|raw }};
+            window.YesknMessages = {
+                warning: [],
+                success: [],
+                info: [],
+                error: [],
+            }
+        </script>
+    {% endblock %}
+</head>
+
+<body>
+
+<div id="wrapper">
+    {% block navbar %}
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        {% include '@YesknAdmin/nav.html.twig' %}
+        {% include '@YesknAdmin/sidebar.html.twig' %}
+    </nav>
+    {% endblock %}
+    <div id="page-wrapper">
+        {% block page_wraper %}{% endblock %}
+    </div>
+
+    <footer>
+        <div style="text-align: center; padding: 10px">
+            {{ 'site_copyright'|trans }}
+        </div>
+    </footer>
+</div>
+
+{% block foot_js_link %}
+    {% javascripts
+        'assets-private/js/common.js'
+        'assets-private/js/admin.js'
+        'assets/lib/bootstrap/dist/js/bootstrap.min.js'
+        'assets/lib/metisMenu/dist/metisMenu.min.js'
+        'assets-private/js/sb-admin-2.js'
+        'assets/lib/bootoast/js/bootoast.js'
+        'assets/lib/eds-ui/dist/js/edsUI.min.js'
+        'assets/lib/echarts/dist/echarts.min.js'
+        filter='uglifyjs2' output='build/js/*.js' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block footer_javascript %}{% endblock %}
+
+{% include 'flash_messages.html.twig' %}
+
+<script>
+   function showAlertModal(modalId, message)
+   {
+       $.get('{{ path('admin_alert_modal') }}', {
+           modalId: modalId,
+           message: message
+       }, function (res) {
+           $('body').append(res);
+
+           let $modal = $('#alertModal'+modalId);
+           $modal.modal();
+       })
+   }
+
+   $(document).on('click', '[data-delete]', function (e) {
+       e.preventDefault();
+       const entity = $(this).attr('data-delete');
+
+       let href = $(this).attr('href');
+       let modalId = Math.round(Math.random() * 100000000);
+       $.post('{{ path('admin_confirm_modal') }}', {
+           modalId: modalId
+       }, function (res) {
+           $('body').append(res);
+
+           let $modal = $('#confirmModal'+modalId);
+
+           $modal.modal();
+           $modal.find('[type="submit"]').on('click', function () {
+               $.post(href, {}, function (res) {
+                   if (res.status) {
+                       if (entity) {
+                           window.location.href = '/admin/' + entity + '/list';
+                       } else {
+                           window.location.reload();
+                       }
+                   } else {
+                       $modal.modal('hide');
+                       showAlertModal(modalId, res.message);
+                   }
+               });
+           });
+       })
+   })
+</script>
+</body>
+</html>

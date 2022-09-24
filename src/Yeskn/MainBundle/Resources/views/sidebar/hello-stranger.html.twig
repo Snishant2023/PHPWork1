@@ -1,0 +1,14 @@
+{% if app.user is empty %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="fa  fa-quote-left"></i> {{ 'hello_stranger'|trans }}
+        </div>
+        <div class="panel-body">
+            {{ 'hello_stranger_detail'|trans }}
+
+            <br>
+            <br>
+            <a data-pjax href="{{ path('register') }}" class="btn btn-default btn-sm btn-block">{{ 'home_now_register'|trans }}</a>
+        </div>
+    </div>
+{% endif %}

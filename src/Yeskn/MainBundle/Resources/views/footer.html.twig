@@ -1,0 +1,59 @@
+{% set siteState = siteState() %}
+
+<footer>
+    <div class="container" style="position: relative">
+        <div class="row" style="margin-bottom: 15px">
+            <div class="brand col-sm-12">
+                {% set footerLinks = siteState.footerLinks %}
+                {% for link in footerLinks %}
+                    <b><a {% if link.isPjax %}data-pjax{% endif %} href="{{ link.link }}">
+                            {{ link.name|trans }}</a></b>
+                    <span class="snow">·</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 15px">
+            <div class="language-box col-sm-12">
+                <span style="display: inline-block;margin-right: 10px">{{ 'site_name'|trans }} {{ 'footer_available_with'|trans }}</span>
+
+                <img class="footer-flag" src="{{ asset('assets/images/flags/zh_CN.png') }}" alt="zh_CN">
+                <a data-pjax href="javascript:"   class="set-locale-link" data-locale="zh_CN">{{ 'chinese'|trans([], 'messages', 'zh_CN') }}</a>
+                <span class="snow">·</span>
+                <img class="footer-flag" src="{{ asset('assets/images/flags/en.png') }}" alt="en">
+                <a href="javascript:" class="set-locale-link" data-locale="en">{{ 'english'|trans([], 'messages', 'en') }}</a>
+                <span class="snow">·</span>
+                <img class="footer-flag" src="{{ asset('assets/images/flags/zh_CN.png') }}" alt="zh_TW">
+                <a href="javascript:" class="set-locale-link" data-locale="zh_TW">{{ 'chinese.tw'|trans([], 'messages', 'zh_TW') }}</a>
+                <span class="snow">·</span>
+                <img class="footer-flag" src="{{ asset('assets/images/flags/jp.png') }}" alt="jp">
+                <a href="javascript:" class="set-locale-link" data-locale="jp">{{ 'japanese'|trans([], 'messages', 'jp') }}</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div>
+                    会员在线{{ siteState.onlineUserCount }}人，
+                    游客<span id="onlineCnt">1</span>人，
+                    {{ 'footer_oneline_user_most'|trans }}(无统计) 人
+                </div>
+                <div class="copy">{{ 'site_copyright'|trans|raw }}</div>
+                <div class="power"><a target="_blank" href="https://yeskn.com">Yeskn Projects</a> <span>❤</span> created by <a target="_blank" href="https://blog.yeskn.com">Jaggle</a> at Shanghai, China</div>
+            </div>
+        </div>
+
+        {% set ads = adsWidget() %}
+        {% for ad in ads if ad.location == 'footer1' %}
+            <div class="visible-lg footer-ad-img" style="position: absolute; right: 0; top: 0;">
+                <a target="_blank" href="https://www.vultr.com/?ref=7228942">
+                    <img width="210px" src="{{ asset('assets/images/ad/vultr.png') }}" alt="">
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</footer>
+
+{% if options().girl_enable %}
+    {% include '@YesknMain/landlord.html.twig' %}
+{% endif %}

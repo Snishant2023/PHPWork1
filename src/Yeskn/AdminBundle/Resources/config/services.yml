@@ -1,0 +1,16 @@
+services:
+
+  Yeskn\AdminBundle\:
+    public: true
+    autoconfigure: true
+    autowire: true
+    resource: '../../../AdminBundle/*'
+    bind:
+      $projectDir: '%kernel.project_dir%'
+      $rootDir: "%kernel.root_dir%"
+    exclude: '../../../AdminBundle/{Entity,Repository,Tests,QueryBuilder}'
+
+  Yeskn\AdminBundle\Controller\:
+    resource: '../../../AdminBundle/Controller'
+    public: true
+    tags: ['controller.service_arguments']

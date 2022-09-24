@@ -1,0 +1,31 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $projectDir: '%kernel.project_dir%'
+
+  Yeskn\Support\:
+    resource: '../../../Support/*'
+
+  Yeskn\Support\EventListener\ExceptionListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, priority: 990}
+
+  Yeskn\Support\EventListener\MaintainExceptionListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, priority: 980 }
+
+  Yeskn\Support\EventListener\ControllerCheckForMaintenanceMode:
+    tags:
+      - { name: kernel.event_listener, event: kernel.controller, priority: 1000 }
+
+  Yeskn\Support\Routing\DynamicRouteLoader:
+    tags:
+      - routing.loader
+
+  Yeskn\Support\EventListener\ConsoleCommandListener:
+    tags:
+      - { name: kernel.event_listener, event: console.command, method: onConsoleCommand  }

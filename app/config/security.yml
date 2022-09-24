@@ -1,0 +1,43 @@
+security:
+    encoders:
+        Yeskn\MainBundle\Entity\User: bcrypt
+        Symfony\Component\Security\Core\User\User: plaintext
+
+    providers:
+        database_provider:
+            entity:
+                class: YesknMainBundle:User
+        in_memory:
+            memory: ~
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern: ^/
+            anonymous: true
+            logout_on_user_change: true
+            provider: database_provider
+            access_denied_handler: Yeskn\MainBundle\EventListener\AccessDeniedHandler
+            form_login:
+                login_path: login
+                check_path: do_login
+                always_use_default_target_path: true
+                default_target_path: /
+            logout:
+                path: /logout
+                target: /
+            remember_me:
+                secret: '%secret%'
+                name: _token
+                lifetime: 604800
+                path: /
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }

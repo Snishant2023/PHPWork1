@@ -1,0 +1,68 @@
+<ul class="pagination">
+    {% if pageData.allPage > 0 %}
+        {% if pageData.pageNo == 1 %}
+            <li class="disabled">
+                <a href="#">&laquo;</a>
+            </li>
+        {% else %}
+            <li>
+                <a href="{{ path('admin_list', {
+                    entity: entity,
+                    pageNo: pageData.pageNo - 1,
+                    pageSize: pageData.pageSize
+                }) }}">&laquo;</a>
+            </li>
+        {% endif %}
+
+        {% if pageData.pageNo > 3 %}
+            <li class="disabled">
+                <a href="javascript:">...</a>
+            </li>
+        {% endif %}
+
+        {% for p in 1..pageData.allPage %}
+            {% if p < pageData.pageNo - 2 %}
+                {# 为了便于理解，这个期间不会显示出来  #}
+            {% endif %}
+
+            {% if p == pageData.pageNo %}
+                <li class="active"><a href="javascript:">{{ p }}</a></li>
+            {% endif %}
+
+            {% if p >= pageData.pageNo - 2 and p != pageData.pageNo and p <= pageData.pageNo + 2 %}
+                <li><a href="{{ path('admin_list', {
+                        entity: entity,
+                        pageNo: p,
+                        pageSize: pageData.pageSize
+                    }) }}">{{ p }}</a></li>
+            {% endif %}
+
+            {% if p > pageData.pageNo + 2 %}
+                {# 为了便于理解，这个期间不会显示出来  #}
+            {% endif %}
+        {% endfor %}
+
+        {% if pageData.allPage > pageData.pageNo + 2 %}
+            <li class="disabled">
+                <a href="javascript:">...</a>
+            </li>
+        {% endif %}
+
+        {% if pageData.pageNo == pageData.allPage  %}
+            <li class="disabled">
+                <a href="javascript:">&raquo;</a>
+            </li>
+        {% else %}
+            <li>
+                <a href="{{ path('admin_list', {
+                    entity:entity,
+                    pageNo: pageData.pageNo + 1,
+                    pageSize: pageData.pageSize
+                }) }}" data-pjax>&raquo;
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+</ul>
+
+<div style="margin-left: 10px">总共 {{ allPage }} 页。</div>

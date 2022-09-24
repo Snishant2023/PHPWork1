@@ -1,0 +1,13 @@
+yeskn_admin:
+    resource: "@YesknAdminBundle/Controller/"
+    type:     annotation
+    prefix:   /admin
+
+yeskn_main:
+    resource: "@YesknMainBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+yeskn_dynamic:
+    resource: .
+    type: extra

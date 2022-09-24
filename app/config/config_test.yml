@@ -1,0 +1,40 @@
+imports:
+    - { resource: config_dev.yml }
+
+parameters:
+    test_database_path: var/data/test.sqlite
+    secret: e01b91e2f072deac5abf039b4f6e6d9149442399
+    redis_dsn: 'redis://localhost:6379'
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters: ~
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        path: '%test_database_path%'
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Symfony\Bundle\AsseticBundle\AsseticBundle:
+        public: true

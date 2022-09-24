@@ -1,0 +1,42 @@
+{% extends '@YesknMain/base.html.twig' %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{ '板块'|trans }} STATE
+                </div>
+                <div class="panel-body center-block">
+                    <h3 style="text-align: center;">{{ 'Vmoex当前板块数量'|trans }} <b>{{ tab_count }}</b></h3>
+                </div>
+            </div>
+
+            {% for tab in tabs %}
+                {% if tab.level == 1 %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            {{ tab.name|trans }}
+                            <small>{{ tab.description|trans }}</small>
+                        </div>
+                        <div class="panel-body">
+                            {% for stab in tabs %}
+                                {% if stab.level == 2 and stab.parent == tab %}
+                                    {% if stab.avatar %}
+                                        <div style="width: 100px;float: left;height: 150px;text-align: center; padding: 10px">
+                                            <img src="{{ stab.avatar }}" alt="" width="100%" class="img-circle">
+                                            <a data-pjax class="tabs-item-button" href="{{ path('homepage', {tab:stab.alias}) }}" role="button">
+                                                {{ stab.name|trans }}
+                                            </a>
+                                        </div>
+
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

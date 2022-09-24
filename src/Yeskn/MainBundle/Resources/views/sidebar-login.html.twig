@@ -1,0 +1,35 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        第三方登录
+    </div>
+    <div class="panel-body">
+        <a href="{{ path('login_from_github') }}" class="btn btn-block btn-social btn-github">
+            <i class="fa fa-github"></i> Github登录
+        </a>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        使用条款
+    </div>
+    <div class="panel-body hot-tags">
+        这里是使用条款的详细内容。
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        $(document).onPjax('click', '.login-wechat', function () {
+            bootoast({
+                message: '微信登录暂时没有开通哦',
+                type: 'warning',
+                position: 'top-center',
+                icon: undefined,
+                timeout: 2,
+                animationDuration: 300,
+                dismissable: true
+            });
+        })
+    })
+</script>

@@ -1,0 +1,17 @@
+{% block image_input_widget %}
+    {% filter spaceless %}
+        {% if data %}
+            <div style="padding: 10px; text-align: center">
+                <img src="{{ asset(data.path ~ '/' ~ data.fileName) }}"
+                     class="img-thumbnail"
+                     alt=""
+                     style="padding: 10px;{% if width %}width:{{ width }}px;{% endif %}{% if height %}height:{{ height }}px{% endif %}">
+            </div>
+        {% endif %}
+        {{ form_widget(form, {attr: {class: 'form-control'}}) }}
+        {% if attr['help'] is defined %}
+            <span class="help-block small-font">{{ attr['help'] }}</span>
+        {% endif %}
+        {{ form_errors(form) }}
+    {% endfilter %}
+{% endblock image_input_widget %}

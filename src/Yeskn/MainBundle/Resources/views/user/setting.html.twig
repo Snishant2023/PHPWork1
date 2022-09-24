@@ -1,0 +1,176 @@
+{% extends '@YesknMain/base.html.twig' %}
+{% form_theme form 'form/vertical-field-1.html.twig' %}
+
+{% block page_wraper %}
+    <div class="row content-row">
+        {% include '@YesknMain/user/sidebar.html.twig' %}
+        <div class="col-lg-8 content-main" role="main">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-gear"></i> 个人设置
+                </div>
+
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#home" data-toggle="tab">基本资料</a></li>
+                        <li><a href="#account" data-toggle="tab">修改密码</a></li>
+                        <li><a href="#emailSetting" data-toggle="tab">邮箱</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="home">
+                            <div style="margin-top:30px">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <form data-pjax-form action="{{ path('modify_user_info') }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="username" class="col-sm-2 control-label">{{ '用户名'|trans }}</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" value="{{ app.user.username }}" class="form-control" id="username" disabled>
+                                                    <span id="helpBlock" class="help-block">用户名不能被修改</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nickname" class="col-sm-2 control-label">{{ '昵称'|trans }}</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" value="{{ app.user.nickname }}" class="form-control" id="nickname"
+                                                           name="nickname"
+                                                           {{ canEditNicknameDays ? 'disabled' : '' }}>
+                                                    <span id="helpBlock" class="help-block">
+                                                        {{ canEditNicknameDays ? (canEditNicknameDays ~ '天后可修改昵称。') : '昵称每180天可修改一次，请谨慎修改。' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="remark" class="col-sm-2 control-label">{{ '状态'|trans }}</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" value="{{ app.user.remark }}" class="form-control" id="remark" name="remark" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="avatar" class="col-sm-2 control-label">{{ '头像'|trans }}</label>
+                                                <div class="col-sm-2">
+                                                    <img src="{{ asset(app.user.avatar) }}" alt="" width="75">
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <input type="file" id="avatar" name="avatar" class="form-control">
+                                                    <p class="help-block">支持jpg、png、gif格式，gif格式需消耗50金币</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-2 col-sm-10">
+                                                    <span class="help-block">昵称和头像180天内只能修改一次，<a class="text-underline" href="">
+                                                            <small class="text-muted">{{ 'why_this'|trans }}</small></a>
+                                                    </span>
+                                                    <button type="submit" class="btn btn-default btn-sm">{{ '保存'|trans }}</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account">
+                            <div style="margin-top:30px">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            {{ form_start(form, {attr: {class: 'form-horizontal', id: 'modalForm', action: path('user_change_password'), 'data-pjax-form': 1}}) }}
+                                            {{ form_widget(form) }}
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-2 col-sm-6">
+                                                    <button type="submit" class="btn btn-default">更新</button>
+                                                </div>
+                                            </div>
+                                            {{ form_end(form) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="emailSetting">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <form data-pjax-form id="emailForm" action="{{ path('user_setting_verify_email') }}" class="form-horizontal" style="margin-top: 30px">
+                                            {% if app.user.isEmailVerified == false %}
+                                                <div class="form-group">
+                                                    <label for="email" class="col-sm-2 control-label">邮箱</label>
+                                                    <div class="input-group col-sm-6" style="padding-left: 15px;padding-right: 15px">
+                                                        <input type="email" id="email" name="email" class="form-control" value="{{ app.user.email }}" />
+                                                            <span class="input-group-addon" id="sendCodeBtn" style="cursor: pointer">发送验证码</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="code" class="col-sm-2 control-label">验证码</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" name="code" autocomplete="off" id="code" required class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-sm-offset-2 col-sm-6">
+                                                        <button type="submit" class="btn btn-default">验证</button>
+                                                    </div>
+                                                </div>
+                                                {% else %}
+                                                    <div class="form-group">
+                                                        <label for="email" class="col-sm-2 control-label">{{ 'email'|trans }}</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" value="{{ app.user.email }}" class="form-control" id="email" disabled>
+                                                            <span id="helpBlock" class="help-block text-success" style="color: green">{{ 'user_setting_email_verified'|trans }}</span>
+                                                        </div>
+                                                    </div>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            $(document).onPjax('click', '#sendCodeBtn', function () {
+                let $btn = $('#sendCodeBtn');
+                let email = $('#emailForm').nameVal('email');
+
+                if (email.length === 0) {
+                    alert('请填写邮箱地址');
+                    return ;
+                }
+
+                $.post("{{ path('user_setting_send_email_code') }}", {
+                    email: email
+                }, function (ret) {
+                    if (ret.status) {
+                        alert("验证码已发送！");
+
+                        let seconds= 60;
+                        $btn.text('重新发送(' + seconds + '秒)');
+
+                        let codeInterval = setInterval(function () {
+                            if (seconds > 0) {
+                                $btn.text('重新发送(' + seconds-- + '秒)');
+                                $btn.prop('disabled', true);
+                            } else {
+                                $btn.text('重新发送');
+                                clearInterval(codeInterval);
+                                $btn.prop('disabled', false);
+                            }
+                        }, 1000);
+                    } else {
+                        alert(ret.message)
+                    }
+                });
+            })
+        })
+    </script>
+{% endblock %}
